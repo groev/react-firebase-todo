@@ -52,6 +52,8 @@ export default function List() {
       py="1rem"
       flex="1"
     >
+      {JSON.stringify(list)}
+      {JSON.stringify(selectedList)}
       <Titleform />
       <Listcontainer />
       <Taskform />
