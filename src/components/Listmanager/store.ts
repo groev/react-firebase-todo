@@ -34,14 +34,6 @@ export const useListManagerStore = create<ListManagerStore>((set, get) => ({
       order: get().lists.length,
       user: auth.currentUser?.uid,
     };
-    const add = await addDoc(collection(db, "lists"), list);
-    if (add)
-      setTimeout(() => {
-        set({
-          selectedList: add.id,
-        });
-      }, 300);
-
-    return;
+    return await addDoc(collection(db, "lists"), list);
   },
 }));
