@@ -5,7 +5,7 @@ import { db } from "@/firebase";
 
 interface ListStore {
   list: List | null;
-  setList: (lists: List) => void;
+  setList: (lists: List | null) => void;
   addTask: (title: string) => void;
   toggleTaskCompletion: (taskId: string) => void;
   updateListItems: (items: ListItem[]) => void;

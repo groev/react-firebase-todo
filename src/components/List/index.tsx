@@ -19,7 +19,10 @@ export default function List() {
   const setList = useListStore((state) => state.setList);
   const list = useListStore((state) => state.list);
   useEffect(() => {
-    if (!selectedList) return;
+    if (!selectedList) {
+      setList(null);
+      return;
+    }
     const unsubscribe = onSnapshot(
       doc(db, "lists", selectedList),
       { includeMetadataChanges: true },
