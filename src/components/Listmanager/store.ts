@@ -1,7 +1,7 @@
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, addDoc, collection } from "firebase/firestore";
 import { create } from "zustand";
 
-import { db } from "@/firebase";
+import { db, auth } from "@/firebase";
 
 interface ListManagerStore {
   lists: List[];
@@ -9,6 +9,7 @@ interface ListManagerStore {
   selectedList: string | null;
   setSelectedList: (id: string) => void;
   deleteList: (listId: string) => void;
+  addList: () => void;
 }
 
 export const useListManagerStore = create<ListManagerStore>((set, get) => ({
@@ -24,5 +25,20 @@ export const useListManagerStore = create<ListManagerStore>((set, get) => ({
     } else {
       set({ selectedList: null });
     }
+  },
+  addList: async () => {
+    const listCount = get().lists.length;
+    const list = {
+      title: `New List ${listCount ? `(${listCount})` : ""}`,
+      items: [],
+      order: get().lists.length,
+      user: auth.currentUser?.uid,
+    };
+    const add = await addDoc(collection(db, "lists"), list);
+    if (add)
+      set({
+        selectedList: add.id,
+      });
+    return;
   },
 }));

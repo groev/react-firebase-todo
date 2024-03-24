@@ -11,6 +11,7 @@ interface ListStore {
   updateListItems: (items: ListItem[]) => void;
   updateTask: (taskId: string, title: string) => void;
   deleteTask: (taskId: string) => void;
+  updateList: (title: string) => void;
 }
 
 export const useListStore = create<ListStore>((set, get) => ({
@@ -74,6 +75,12 @@ export const useListStore = create<ListStore>((set, get) => ({
       };
       set({ list: updatedList });
       setDoc(doc(db, "lists", updatedList.id), updatedList);
+    }
+  },
+  updateList: async (title) => {
+    const list = get().list;
+    if (list) {
+      await setDoc(doc(db, "lists", list.id), { title }, { merge: true });
     }
   },
 

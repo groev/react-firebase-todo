@@ -6,13 +6,10 @@ import {
   where,
   DocumentSnapshot,
   QuerySnapshot,
-  addDoc,
 } from "firebase/firestore";
 import { Button, Stack, Text } from "@mantine/core";
 
 import { IconPlus } from "@tabler/icons-react";
-
-import { useMutation } from "@tanstack/react-query";
 
 import { useListManagerStore } from "@/components/Listmanager/store";
 
@@ -27,6 +24,7 @@ export default function Listmanager() {
   const setSelectedList = useListManagerStore((state) => state.setSelectedList);
   const selectedList = useListManagerStore((state) => state.selectedList);
   const lists = useListManagerStore((state) => state.lists);
+  const addList = useListManagerStore((state) => state.addList);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -50,19 +48,6 @@ export default function Listmanager() {
     return () => unsubscribe();
   }, [setLists, selectedList, setSelectedList]);
 
-  const addList = useMutation({
-    mutationFn: async () => {
-      const list = {
-        title: "New List" + lists.length,
-        items: [],
-        order: lists.length,
-        user: auth.currentUser?.uid,
-      };
-      const doc = await addDoc(collection(db, "lists"), list);
-      return setSelectedList(doc.id);
-    },
-  });
-
   return (
     <Stack h={"100%"} justify="space-between">
       <Stack gap={0}>
@@ -74,8 +59,7 @@ export default function Listmanager() {
         </Sortable>
       </Stack>
       <Button
-        onClick={() => addList.mutate()}
-        loading={addList.isPending}
+        onClick={() => addList()}
         px="xs"
         color="text"
         size="lg"

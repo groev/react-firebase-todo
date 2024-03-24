@@ -1,17 +1,14 @@
 import { useState, useEffect } from "react";
-import { doc, setDoc } from "firebase/firestore";
 import { Text, TextInput, Group, Box } from "@mantine/core";
 import { useClickOutside, useFocusTrap, useMergedRef } from "@mantine/hooks";
-import { useMutation } from "@tanstack/react-query";
 
 import { useListStore } from "@/components/List/store";
-
-import { db } from "@/firebase";
 
 import Settings from "./Settings";
 
 export default function Titleform() {
   const listData = useListStore((state) => state.list);
+  const updateList = useListStore((state) => state.updateList);
 
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(listData?.title || "");
@@ -21,25 +18,12 @@ export default function Titleform() {
   }, [listData]);
 
   const useClickOutsideRef = useClickOutside<HTMLDivElement>(() => {
-    updateList.mutate();
+    updateList(title);
     setIsEditing(false);
   }, null);
   const focusTrapRef = useFocusTrap(isEditing);
 
   const mergedRef = useMergedRef(useClickOutsideRef, focusTrapRef);
-
-  const updateList = useMutation({
-    mutationFn: async () => {
-      if (listData) {
-        await setDoc(
-          doc(db, "lists", listData?.id),
-          { title },
-          { merge: true }
-        );
-        setIsEditing(false);
-      }
-    },
-  });
 
   return (
     <Box
@@ -67,11 +51,11 @@ export default function Titleform() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                updateList.mutate();
+                updateList(title);
               }}
             >
               <TextInput
-                onBlur={() => updateList.mutate()}
+                onBlur={() => updateList(title)}
                 miw={300}
                 maw={"100%"}
                 styles={{
