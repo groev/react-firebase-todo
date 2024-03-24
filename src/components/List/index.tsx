@@ -19,21 +19,19 @@ export default function List() {
   const setList = useListStore((state) => state.setList);
   const list = useListStore((state) => state.list);
   useEffect(() => {
-    if (!selectedList) {
-      setList(null);
-      return;
+    if (selectedList) {
+      const unsubscribe = onSnapshot(
+        doc(db, "lists", selectedList),
+        (doc: DocumentSnapshot) => {
+          const listData = {
+            id: doc.id,
+            ...doc.data(),
+          } as List;
+          setList(listData);
+        }
+      );
+      return () => unsubscribe();
     }
-    const unsubscribe = onSnapshot(
-      doc(db, "lists", selectedList),
-      (doc: DocumentSnapshot) => {
-        const listData = {
-          id: doc.id,
-          ...doc.data(),
-        } as List;
-        setList(listData);
-      }
-    );
-    return () => unsubscribe();
   }, [selectedList, setList]);
 
   if (!list)
