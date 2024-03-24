@@ -25,7 +25,6 @@ export default function List() {
     }
     const unsubscribe = onSnapshot(
       doc(db, "lists", selectedList),
-      { includeMetadataChanges: true },
       (doc: DocumentSnapshot) => {
         const listData = {
           id: doc.id,
