@@ -1,12 +1,14 @@
-import { AppShell, Burger, Text, Group } from "@mantine/core";
+import { AppShell, Burger, Text, Group, Container, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBrandFirebase } from "@tabler/icons-react";
 
 import List from "@/components/List";
 import Listmanager from "@/components/Listmanager";
+import { useListManagerStore } from "@/components/Listmanager/store";
 
 export default function Layout() {
   const [opened, { toggle }] = useDisclosure();
+  const selectedList = useListManagerStore((state) => state.selectedList);
 
   return (
     <AppShell
@@ -36,7 +38,13 @@ export default function Layout() {
       </AppShell.Navbar>
 
       <AppShell.Main display="flex" style={{ flexDirection: "column" }}>
-        <List />
+        {selectedList ? (
+          <List />
+        ) : (
+          <Container>
+            <Title order={2}>Create your first list</Title>
+          </Container>
+        )}
       </AppShell.Main>
     </AppShell>
   );

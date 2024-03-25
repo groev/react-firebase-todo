@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { DocumentSnapshot, onSnapshot, doc } from "firebase/firestore";
 
-import { Flex, Container, Text } from "@mantine/core";
+import { Flex } from "@mantine/core";
 
 import { useListStore } from "@/components/List/store";
 
@@ -17,27 +17,22 @@ import Titleform from "./Titleform";
 export default function List() {
   const selectedList = useListManagerStore((state) => state.selectedList);
   const setList = useListStore((state) => state.setList);
-  const list = useListStore((state) => state.list);
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      doc(db, "lists", selectedList || "xxx"),
-      (doc: DocumentSnapshot) => {
-        const listData = {
-          id: doc.id,
-          ...doc.data(),
-        } as List;
-        setList(listData);
-      }
-    );
-    return () => unsubscribe();
+    if (selectedList) {
+      const unsubscribe = onSnapshot(
+        doc(db, "lists", selectedList),
+        (doc: DocumentSnapshot) => {
+          const listData = {
+            id: doc.id,
+            ...doc.data(),
+          } as List;
+          setList(listData);
+        }
+      );
+      return () => unsubscribe();
+    }
   }, [selectedList, setList]);
 
-  if (!list)
-    return (
-      <Container>
-        <Text>Create your first List</Text>
-      </Container>
-    );
   return (
     <Flex
       direction="column"

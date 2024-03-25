@@ -29,7 +29,7 @@ export const useListManagerStore = create<ListManagerStore>((set, get) => ({
   addList: async () => {
     const listCount = get().lists.length;
     const list = {
-      title: `New List ${listCount ? `(${listCount})` : ""}`,
+      title: `New List${listCount ? ` (${listCount})` : ""}`,
       items: [],
       order: get().lists.length,
       user: auth.currentUser?.uid,

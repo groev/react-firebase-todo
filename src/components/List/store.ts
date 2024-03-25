@@ -45,7 +45,7 @@ export const useListStore = create<ListStore>((set, get) => ({
       setDoc(doc(db, "lists", updatedList.id), updatedList);
     }
   },
-  addTask: (title) => {
+  addTask: async (title) => {
     const list = get().list;
     if (list) {
       const updatedList = {
@@ -59,9 +59,8 @@ export const useListStore = create<ListStore>((set, get) => ({
           },
         ],
       };
-      // update firestore task
-      setDoc(doc(db, "lists", updatedList.id), updatedList);
-      set({});
+      await setDoc(doc(db, "lists", updatedList.id), updatedList);
+      return set({ list: updatedList });
     }
   },
   updateTask: (taskId, title) => {
@@ -81,18 +80,19 @@ export const useListStore = create<ListStore>((set, get) => ({
     const list = get().list;
     if (list) {
       await setDoc(doc(db, "lists", list.id), { title }, { merge: true });
+      return set({ list: { ...list, title } });
     }
   },
 
-  deleteTask: (taskId) => {
+  deleteTask: async (taskId) => {
     const list = get().list;
     if (list) {
       const updatedList = {
         ...list,
         items: list.items.filter((item) => item.id !== taskId),
       };
-      set({ list: updatedList });
       setDoc(doc(db, "lists", updatedList.id), updatedList);
+      return set({ list: updatedList });
     }
   },
 }));
