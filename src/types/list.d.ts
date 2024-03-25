@@ -3,6 +3,7 @@ interface List {
   title: string;
   items: ListItem[];
   order: number;
+  user?: string;
 }
 
 interface ListItem {

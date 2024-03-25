@@ -16,7 +16,6 @@ import { useListManagerStore } from "@/components/Listmanager/store";
 import { db, auth } from "@/firebase";
 
 import List from "./List";
-
 import Sortable from "./Sortable";
 
 export default function Listmanager() {
@@ -42,6 +41,7 @@ export default function Listmanager() {
         });
         const sorted = data.sort((a, b) => a.order - b.order);
         setLists(sorted);
+
         if (!selectedList) setSelectedList(sorted[0]?.id);
       }
     );
